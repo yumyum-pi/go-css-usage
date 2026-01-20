@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"yumyum-pi/go-css-usage/pkg/css"
 	"yumyum-pi/go-css-usage/pkg/html"
 	"yumyum-pi/go-css-usage/pkg/ignorefile"
 
@@ -14,6 +15,12 @@ var (
 	gitignore   *string
 )
 
+var data = `
+<p>
+  <h2 id="foo">a header</h2>
+  <h2 id="bar">another header</h2>
+</p>`
+
 var rootCmd = &cobra.Command{
 	Use:   "go-css-usage",
 	Short: "find all the css selectors used in a html file",
@@ -23,6 +30,13 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 
 		}
+
+		_, err := css.ReadFile(*cssFilePath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error when  reading css file:%s\n", err)
+			os.Exit(1)
+		}
+
 		if len(args) == 0 {
 			fmt.Fprintln(os.Stderr, "ignore and html files not given in args")
 			os.Exit(1)
