@@ -3,6 +3,7 @@ package html
 import (
 	"io/fs"
 	"path/filepath"
+	"strings"
 	"yumyum-pi/go-css-usage/pkg/ignorefile"
 )
 
@@ -22,7 +23,10 @@ func GetFiles(root string, ignoreList *ignorefile.GitIgnore) ([]string, error) {
 		}
 
 		if !d.IsDir() {
-			paths = append(paths, path)
+			// check html
+			if strings.HasSuffix(path, ".html") {
+				paths = append(paths, path)
+			}
 		}
 		return nil
 	})
