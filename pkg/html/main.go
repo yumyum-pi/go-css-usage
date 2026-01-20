@@ -3,14 +3,24 @@ package html
 import (
 	"io/fs"
 	"path/filepath"
+	"yumyum-pi/go-css-usage/pkg/ignorefile"
 )
 
-func GetFiles(root string) ([]string, error) {
+func GetFiles(root string, ignoreList *ignorefile.GitIgnore) ([]string, error) {
 	paths := make([]string, 0)
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
+		// Check if the file matches the ignore pattern.
+		//
+		if ignoreList.MatchesPath(path) {
+			if d.IsDir() {
+				return filepath.SkipDir // Skip ignored directories and their contents
+			}
+			return nil // Skip ignored files
+		}
+
 		if !d.IsDir() {
 			paths = append(paths, path)
 		}
